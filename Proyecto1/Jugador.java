@@ -1,63 +1,144 @@
-import java.util.*;
 
+import java.awt.*;
+
+import java.awt.event.KeyEvent;
+
+import javax.swing.JOptionPane;
 public class Jugador extends Microorganismo {
-    private Map<String, Integer> prioridades;
-    private List<String> personalidad;
-    private List<String> acciones;
-
-    public Jugador(int maxEnergia, int minEnergia, int maxVision, int minVision,
-            int maxVelocidad, int minVelocidad, int maxEdad, int minEdad) {
-        super(maxEnergia, minEnergia, maxVision, minVision, maxVelocidad, minVelocidad, maxEdad, minEdad);
-        this.prioridades = new HashMap<>();
-        this.personalidad = new ArrayList<>();
-        this.acciones = new ArrayList<>();
-    }
-
-    public void setPrioridad(String caracteristica, int valor) {
-        this.prioridades.put(caracteristica, valor);
-    }
-
-    public void setPersonalidad(List<String> personalidad) {
-        this.personalidad = personalidad;
-    }
-
-    public void setAcciones(List<String> acciones) {
-        this.acciones = acciones;
-    }
-
-    public void tomarDecision(Map<String, List<Microorganismo>> entorno) {
-        Map<String, Integer> opciones = new HashMap<>();
-        for (String accion : this.acciones) {
-            opciones.put(accion, 0);
-        }
-        for (String caracteristica : this.prioridades.keySet()) {
-            for (Microorganismo m : entorno.get(caracteristica)) {
-                if (m instanceof NPC) {
-                    opciones.put(this.personalidad.get(0), opciones.get(this.personalidad.get(0)) + this.prioridades.get(caracteristica));
-                    opciones.put(this.personalidad.get(1), opciones.get(this.personalidad.get(1)) - this.prioridades.get(caracteristica));
-                } else {
-                    opciones.put(this.personalidad.get(0), opciones.get(this.personalidad.get(0)) - this.prioridades.get(caracteristica));
-                    opciones.put(this.personalidad.get(1), opciones.get(this.personalidad.get(1)) + this.prioridades.get(caracteristica));
-                }
+ 
+   //hereda funciones y parametros de la clase microorganismo, este va a ser el jugador de la partida
+    
+    int tamanoMax=1000;
+    int cuadroTam=30;
+    int tam;
+    int res;
+    int direccionX;
+    int direccionY;
+    int[] posicion;
+    
+    public Jugador(String tipo, int energia, int velocidad, int vision, int posX, int posY, int tamano,Color identificador,int minEnergia,int maxEnergia,int minVelocidad,int maxVelocidad,int minVision,int maxVision) {
+                super(tipo, energia, velocidad, vision, posX, posY, tamano,identificador,minEnergia,maxEnergia,minVelocidad,maxVelocidad,minVision,maxVision);
+               
+               this.tamano=tamano;
+               
+                
+                this.posX=cuadroTam;
+                this.posY=cuadroTam;
+              
+                
+                //this.tam=tamanoMax/cuadroTam;
+                //this.res=tamanoMax%cuadroTam;
+                
             }
-        }
-        String accionElegida = Collections.max(opciones.entrySet(), Map.Entry.comparingByValue()).getKey();
-        switch (accionElegida) {
-            case "comer":
-                this.comer();
-                break;
-            case "huir":
-                this.huir();
-                break;
-            case "perseguir":
-                this.perseguir();
-                break;
-            case "descansar":
-                this.descansar();
-                break;
-            default:
-                System.out.println("Acción inválida");
-                break;
-        }
-    }
+                
+              //permite mover al jugador
+                public void mover()
+               
+                {
+                 // System.out.println(this.energia);
+                  if(this.energia<=this.minEnergia){
+                    JOptionPane.showMessageDialog(null, "Has perdido por energia");
+                    System.exit(0);
+                  }
+                 else if (this.posX<30 && direccionX<0)
+                 {
+                  this.posX=720;
+                  
+                 }else if(this.posX>720 && direccionX>0){
+                  this.posX=0;
+                 }else if(this.posY>720 && direccionY>0){
+                  this.posY=0;
+                 }else if(this.posY<30 && direccionY<0){
+                  this.posY=720;
+                 }
+                 
+                   this.posX+=direccionX;
+                   
+                  
+                   this.posY+=direccionY;
+                  
+                  // System.out.println(this.energia);
+                
+              }
+                public int obtenerX()
+                {
+                    return this.posX;
+                }
+                public int obtenerY()
+                {
+                    return this.posY;
+
+                }//permite mover al jugador al presionar las teclas definidas
+                public void keypressed(KeyEvent e)
+                {
+                  int key = e.getKeyCode();
+                if (this.energia>this.minEnergia){
+                  if (key==KeyEvent.VK_LEFT)
+                  {
+                    direccionX=-this.velocidad;
+                    this.energia-=1;
+                  }
+                  if (key==KeyEvent.VK_RIGHT)
+                  {
+                    
+                    direccionX= this.velocidad;
+                    this.energia-=1;
+                    
+                  }
+                  if (key==KeyEvent.VK_DOWN)
+                  {
+                    direccionY= this.velocidad;
+                    this.energia-=1;
+                  }
+                  if (key==KeyEvent.VK_UP)
+                  {
+                    direccionY=-this.velocidad;
+                    this.energia-=1;
+                  }
+                }
+                }//permite dejar de mover al jugador si se deja de presionar una tecla
+                public void keyrelease(KeyEvent e)
+                {
+                  int key = e.getKeyCode();
+                  if (key==KeyEvent.VK_LEFT)
+                  {
+                    direccionX=0;
+                  }
+                  if (key==KeyEvent.VK_RIGHT)
+                  {
+                    direccionX= 0;
+                  }
+                  if (key==KeyEvent.VK_DOWN)
+                  {
+                    direccionY=0;
+                  }
+                  if (key==KeyEvent.VK_UP)
+                  {
+                    direccionY=0;
+                  }
+                  this.tamano+=1;
+                }
+               
+                public void buscar() {
+            
+                }
+                
+                public void huir() {
+                   
+                }
+                //permite comer al jugador
+                public boolean comer(int x, int y) {
+                  boolean exist=true;
+                  if (this.posX==x && this.posY==y){
+                    return exist;
+                  }else{
+                    exist=false;
+                    return exist;
+                  }
+                  
+                }
+                public void atacar() {
+                   
+                
+            }
 }
